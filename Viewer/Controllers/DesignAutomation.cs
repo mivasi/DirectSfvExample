@@ -4,39 +4,40 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 
+// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+
 namespace Viewer.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
-    public class ValuesController : ControllerBase
+    public class DesignAutomation : Controller
     {
-        // GET api/values
+        // GET: api/<controller>
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public IEnumerable<string> Get()
         {
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
+        // GET api/<controller>/5
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public string Get(int id)
         {
             return "value";
         }
 
-        // POST api/values
+        // POST api/<controller>
         [HttpPost]
-        public void Post([FromBody] string value)
+        public void Post()
         {
         }
 
-        // PUT api/values/5
+        // PUT api/<controller>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        public void Put(int id, [FromBody]string value)
         {
         }
 
-        // DELETE api/values/5
+        // DELETE api/<controller>/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {

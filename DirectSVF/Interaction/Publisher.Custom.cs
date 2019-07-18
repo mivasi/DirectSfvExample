@@ -16,11 +16,11 @@ namespace Interaction
             private const int EngineVersion = 23;
             public static readonly string Engine = $"Autodesk.Inventor+{EngineVersion}";
 
-            public const string Description = "Direct SVF export from IPT";
+            public const string Description = "SVF export from IPT";
 
             internal static class Bundle
             {
-                public static readonly string Id = "DirectSVF";
+                public static readonly string Id = "ExportToSvf";
                 public const string Label = "alpha";
 
                 public static readonly AppBundle Definition = new AppBundle
@@ -76,8 +76,6 @@ namespace Interaction
                                 Verb = Verb.Put,
                                 LocalName = "SvfOutput",
                                 Description = "Resulting files with SVF",
-                                Ondemand = false,
-                                Required = false,
                                 Zip = true
                             }
                         }
