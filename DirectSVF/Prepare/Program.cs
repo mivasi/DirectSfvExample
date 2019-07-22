@@ -103,6 +103,7 @@ namespace Prepare
             var configuration = new ConfigurationBuilder()
                                 .SetBasePath(Directory.GetCurrentDirectory())
                                 .AddJsonFile("appsettings.json", false)
+                                .AddJsonFile("appsettings.user.json", false)
                                 .AddEnvironmentVariables()
                                 .Build();
 

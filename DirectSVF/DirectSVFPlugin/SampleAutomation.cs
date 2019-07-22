@@ -20,11 +20,13 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 using Inventor;
 using System.Threading;
 using Path = System.IO.Path;
+using File = System.IO.File;
 
 namespace DirectSVFPlugin
 {
@@ -45,10 +47,11 @@ namespace DirectSVFPlugin
 
                     LogTrace("HeartBeating every {0}ms.", intervalMillisec);
 
-                    for (; ; )
+                    for (;;)
                     {
                         Thread.Sleep(intervalMillisec);
-                        LogTrace("HeartBeat {0}.", (long)TimeSpan.FromTicks(DateTime.UtcNow.Ticks - ticks).TotalSeconds);
+                        LogTrace("HeartBeat {0}.",
+                            (long) TimeSpan.FromTicks(DateTime.UtcNow.Ticks - ticks).TotalSeconds);
                     }
                 });
 
@@ -88,22 +91,8 @@ namespace DirectSVFPlugin
 
             try
             {
-                if (doc.DocumentType == DocumentTypeEnum.kPartDocumentObject)
-                {
-                    using (new HeartBeat())
-                    {
-                        SaveAsSVF(doc);
-                    }
-                }
-                else if (doc.DocumentType == DocumentTypeEnum.kAssemblyDocumentObject) // Assembly.
-                {
-                    using (new HeartBeat())
-                    {
-                        // TODO: handle the Inventor assembly here
-                    }
-                }
-            }
-            catch (Exception e)
+                SaveAsSVF(doc);
+            } catch (Exception e)
             {
                 LogError("Processing failed. " + e.ToString());
             }
@@ -111,106 +100,68 @@ namespace DirectSVFPlugin
 
         public void RunWithArguments(Document doc, NameValueMap map)
         {
-            
+
         }
 
         private void SaveAsSVF(Document Doc)
         {
-            LogTrace($"** Saving SVF");
-
-            TranslatorAddIn oAddin = null;
-
-            try
+            using (new HeartBeat())
             {
-                foreach (ApplicationAddIn item in inventorApplication.ApplicationAddIns)
-                {
+                LogTrace($"** Saving SVF");
 
-                    if (item.ClassIdString == "{C200B99B-B7DD-4114-A5E9-6557AB5ED8EC}")
+                TranslatorAddIn oAddin = null;
+
+                try
+                {
+                    ApplicationAddIn svfAddin = inventorApplication
+                        .ApplicationAddIns
+                        .Cast<ApplicationAddIn>()
+                        .FirstOrDefault(item => item.ClassIdString == "{C200B99B-B7DD-4114-A5E9-6557AB5ED8EC}");
+                        
+                    oAddin = (TranslatorAddIn)svfAddin;
+
+                    if (oAddin != null)
                     {
                         Trace.TraceInformation("SVF Translator addin is available");
-                        oAddin = (TranslatorAddIn)item;
-                        break;
+                        TranslationContext oContext = inventorApplication.TransientObjects.CreateTranslationContext();
+                        // Setting context type
+                        oContext.Type = IOMechanismEnum.kFileBrowseIOMechanism;
+
+                        NameValueMap oOptions = inventorApplication.TransientObjects.CreateNameValueMap();
+                        // Create data medium;
+                        DataMedium oData = inventorApplication.TransientObjects.CreateDataMedium();
+
+                        Trace.TraceInformation("SVF save");
+                        var sessionDir = Path.Combine(Directory.GetCurrentDirectory(), "SvfOutput");
+                        oData.FileName = Path.Combine(sessionDir, "result.collaboration");
+                        var outputDir = Path.Combine(sessionDir, "output");
+                        var bubbleFileOriginal = Path.Combine(outputDir, "bubble.json");
+                        var bubbleFileNew = Path.Combine(sessionDir, "bubble.json");
+
+                        // Setup SVF options
+                        if (oAddin.get_HasSaveCopyAsOptions(Doc, oContext, oOptions))
+                        {
+                            oOptions.set_Value("GeometryType", 1);
+                            oOptions.set_Value("EnableExpressTranslation", true);
+                            oOptions.set_Value("SVFFileOutputDir", sessionDir);
+                            oOptions.set_Value("ExportFileProperties", false);
+                            oOptions.set_Value("ObfuscateLabels", true);
+                        }
+
+                        LogTrace($"SVF files are oputput to: {oOptions.get_Value("SVFFileOutputDir")}");
+
+                        oAddin.SaveCopyAs(Doc, oContext, oOptions, oData);
+                        Trace.TraceInformation("SVF can be exported.");
+                        LogTrace($"** Saved SVF as {oData.FileName}");
+                        File.Move(bubbleFileOriginal, bubbleFileNew);
                     }
-                    else { }
                 }
-
-
-                if (oAddin != null)
+                catch (Exception e)
                 {
-                    TranslationContext oContext = inventorApplication.TransientObjects.CreateTranslationContext();
-                    // Setting context type
-                    oContext.Type = IOMechanismEnum.kFileBrowseIOMechanism;
-
-                    NameValueMap oOptions = inventorApplication.TransientObjects.CreateNameValueMap();
-                    // Create data medium;
-                    DataMedium oData = inventorApplication.TransientObjects.CreateDataMedium();
-
-                    Trace.TraceInformation("SVF save");
-                    var sessionDir = Path.Combine(Directory.GetCurrentDirectory(), "SvfOutput");
-                    oData.FileName = Path.Combine(sessionDir, "resultik.collaboration");
-                    
-                    // Setup SVF options
-                    if (oAddin.get_HasSaveCopyAsOptions(Doc, oContext, oOptions))
-                    {
-                        oOptions.set_Value("GeometryType", 1);
-                        oOptions.set_Value("EnableExpressTranslation", true);
-                        oOptions.set_Value("SVFFileOutputDir", sessionDir);
-                        oOptions.set_Value("ExportFileProperties", false);
-                        oOptions.set_Value("ObfuscateLabels", true);
-                    }
-                    LogTrace($"SVF files are oputput to: {oOptions.get_Value("SVFFileOutputDir")}");
-
-                    oAddin.SaveCopyAs(Doc, oContext, oOptions, oData);
-                    Trace.TraceInformation("SVF can be exported.");
-                    LogTrace($"** Saved SVF as {oData.FileName}");
-                    //ZipFile.CreateFromDirectory(Directory.GetCurrentDirectory(), "result.zip", CompressionLevel.Fastest, false);
+                    LogError($"********Export to format SVF failed: {e.Message}");
                 }
-            }
-            catch (Exception e)
-            {
-                LogError($"********Export to format SVF failed: {e.Message}");
             }
         }
-
-        #region Common utilities
-
-        /// <summary>
-        /// It downloads an onDemand argument. It is a synchronous operation.
-        /// </summary>
-        /// <param name="name">Argument name in activity you want to download</param>
-        /// <param name="suffix">It is possible to add a suffix to URL given in a workitem</param>
-        /// <param name="headers">It allows you to add HTTP headers. Use the following format key1:value1;key2:value2</param>
-        /// <param name="requestContentOrFile">The Body of the HTTP request</param>
-        /// <param name="responseFile">The name of the downloaded file. Use the following format file://filename.ext</param>
-        /// <returns>True when download ends successfully</returns>
-        private static bool OnDemandHttpOperation(string name, string suffix, string headers, string requestContentOrFile,
-            string responseFile)
-        {
-            LogTrace("!ACESAPI:acesHttpOperation({0},{1},{2},{3},{4})",
-                name ?? "", suffix ?? "", headers ?? "", requestContentOrFile ?? "", responseFile ?? "");
-
-            int idx = 0;
-            while (true)
-            {
-                char ch = Convert.ToChar(Console.Read());
-                if (ch == '\x3')
-                {
-                    return true;
-                }
-                else if (ch == '\n')
-                {
-                    return false;
-                }
-
-                if (idx >= 16)
-                {
-                    return false;
-                }
-
-                idx++;
-            }
-        }
-        #endregion
 
         #region Logging utilities
 

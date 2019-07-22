@@ -32,7 +32,8 @@ namespace Viewer
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.TryAddScoped<TwoLeggedApi>();
             services.Configure<ForgeConfiguration>(Configuration.GetSection("Forge"));
-            services.AddDesignAutomation(this.Configuration);
+            services.AddHttpClient();
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
