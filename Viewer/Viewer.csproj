@@ -5,6 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="..\appsettings.user.json" Link="Controllers\appsettings.user.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autodesk.Forge" Version="1.5.2" />
     <PackageReference Include="Autodesk.Forge.DesignAutomation" Version="3.0.0-beta5" />
     <PackageReference Include="Microsoft.AspNetCore.App" />
@@ -13,9 +19,6 @@
 
   <ItemGroup>
     <Content Update="appsettings.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Update="appsettings.user.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
