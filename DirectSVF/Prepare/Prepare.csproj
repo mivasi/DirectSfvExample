@@ -7,17 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Autodesk.Forge" Version="1.5.2" />
-    <PackageReference Include="Autodesk.Forge.DesignAutomation" Version="3.0.0-beta4" />
+    <PackageReference Include="Autodesk.Forge.DesignAutomation" Version="3.0.0-beta5" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="VerticalPlate.ipt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Properties\" />
   </ItemGroup>
 
 </Project>

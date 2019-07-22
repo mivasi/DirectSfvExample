@@ -4,7 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 
-namespace Interaction
+namespace Prepare
 {
     class Program
     {
@@ -16,11 +16,7 @@ namespace Interaction
 
         private static readonly Command[] commands = new Command[]
         {
-            new Command { Description = "Post app bundle",          Action = (publisher) => publisher.PostAppBundleAsync() },
-            new Command { Description = "Post activity",            Action = (publisher) => publisher.PublishActivityAsync() },
-            new Command { Description = "Run work item",            Action = (publisher) => publisher.RunWorkItemAsync() },
-            new Command { Description = "List available engines",   Action = (publisher) => publisher.ListEnginesAsync() },
-            new Command { Description = "Send input file",   Action = (publisher) => publisher.UploadInputFile() }
+            new Command { Description = "Prepare the SVF sample app bundle and activity",          Action = (publisher) => publisher.ReparingDriectSvf() }
         };
 
         static async Task Main(string[] args)
@@ -91,7 +87,7 @@ namespace Interaction
 
         private static void PrintHelp()
         {
-            Console.WriteLine("Design Automation interaction console");
+            Console.WriteLine("Design Automation SVF sample console");
             Console.WriteLine("Available actions:");
             for (int i = 0; i < commands.Length; i++)
             {
