@@ -91,6 +91,7 @@ namespace Prepare
                                    {
                                        Verb = Verb.Get,
                                        Description = "IPT file or ZIP with assembly to process",
+                                       LocalName = "input.ipt"
                                    }
                            },
                            {

@@ -150,7 +150,7 @@ namespace Viewer.Controllers
             Directory.CreateDirectory(resultsDirPath);
             
 
-            var outputArgument = workitemWithStatus.WorkItem.Arguments["OutputIpt"] as XrefTreeArgument;
+            var outputArgument = workitemWithStatus.WorkItem.Arguments["OutputZip"] as XrefTreeArgument;
             var httpClient = _httpClientFactory.CreateClient();
             var response = await httpClient.GetAsync(outputArgument.Url);
             using (var fileStream = new FileStream(resultsZipPath, FileMode.Create))
