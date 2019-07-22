@@ -2,6 +2,11 @@
     env: 'Local'
 };
 
+function changeStatus(text) {
+    let statusDiv = $("#status");
+    statusDiv.html(text);
+}
+
 async function createWorkItem() {
     var input = document.getElementById("uploadFileInput");
     var files = input.files;
@@ -79,10 +84,14 @@ $(document).ready(function (e) {
     $("#uploadFile").on('submit', (async function (e) {
         e.preventDefault();
         try {
+            changeStatus("Creating workitem ...");
             let workitemWithStatus = await createWorkItem();
+            changeStatus("Wating for workitem to be done ...");
             let workitemStatusDone = await monitorWorkitem(workitemWithStatus.status);
             console.log(workitemStatusDone);
+            changeStatus("Downloading results ...");
             await downloadResults(workitemWithStatus);
+            changeStatus("Showing in viewer ...");
             showModelInViewer(workitemWithStatus.status.id);
         } catch (exception) {
             console.log(exception);
