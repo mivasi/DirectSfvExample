@@ -119,11 +119,11 @@ namespace Prepare
             PackagePathname = configuration.GetValue<string>("PackagePathname");
         }
 
-        public async Task ReparingDriectSvf()
+        public async Task PreparingDirectSvf()
         {
             await this.PostAppBundleAsync();
             await this.PublishActivityAsync();
-            Console.WriteLine("Next >>> Please active viewer project and use forge viewer to show the SVF result!");
+            Console.WriteLine("Next >>> Please activate Viewer project and use forge viewer to show the SVF result!");
         }
 
         public async Task PostAppBundleAsync()

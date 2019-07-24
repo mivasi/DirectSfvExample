@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
-using Autodesk.Forge.DesignAutomation;
-using Autodesk.Forge.DesignAutomation.Http;
+﻿using Autodesk.Forge.DesignAutomation;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
+using System.IO;
 
 namespace Viewer
 {

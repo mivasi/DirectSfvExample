@@ -16,7 +16,7 @@ namespace Prepare
 
         private static readonly Command[] commands = new Command[]
         {
-            new Command { Description = "Prepare the SVF sample app bundle and activity",          Action = (publisher) => publisher.ReparingDriectSvf() }
+            new Command { Description = "Prepare the SVF sample app bundle and activity",          Action = (publisher) => publisher.PreparingDirectSvf() }
         };
 
         static async Task Main(string[] args)

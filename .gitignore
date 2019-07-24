@@ -1,6 +1,5 @@
 # Inventor DA plugin
 Output/
-appsettings.user.json
 Viewer/wwwroot/inputFile.ipt
 Viewer/wwwroot/results
 

@@ -67,9 +67,6 @@
       <Version>11.0.2</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <PluginBundle Include="$(TargetDir)*.*" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -77,6 +74,9 @@
   </Target>
   -->
   <Target Name="AfterBuild">
+    <ItemGroup>
+      <PluginBundle Include="$(TargetDir)*.*" />
+    </ItemGroup>
     <Copy SourceFiles="$(ProjectDir)PackageContents.xml" DestinationFolder="$(TargetDir)..\Bundle\$(MSBuildProjectName).bundle" />
     <Copy SourceFiles="@(PluginBundle)" DestinationFolder="$(TargetDir)..\Bundle\$(MSBuildProjectName).bundle\Contents\" />
     <MakeDir Directories="$(SolutionDir)Output" />
